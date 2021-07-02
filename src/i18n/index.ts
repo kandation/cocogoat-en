@@ -13,7 +13,7 @@ export default {
     install: (app: App, defaultLang?: string, setLang?: (lang: string) => any) => {
         let [lang] = navigator.language.split('-')
         lang = defaultLang || lang
-        i18n.setLocale(availableLocales[lang] ? lang : 'zh')
+        i18n.setLocale(availableLocales[lang] ? lang : 'en')
         app.config.globalProperties.$availableLocales = availableLocales
         app.config.globalProperties.$i18n = i18n
         const langOptions = reactive({
@@ -31,11 +31,11 @@ export default {
         app.config.globalProperties.$lang = langOptions
 
         app.config.globalProperties.__ = (...args: any[]) => {
-            i18n.setLocale(availableLocales[langOptions.lang] ? langOptions.lang : 'zh')
+            i18n.setLocale(availableLocales[langOptions.lang] ? langOptions.lang : 'en')
             return i18n.gettext(...args)
         }
         app.config.globalProperties.___ = (...args: any[]) => {
-            i18n.setLocale(availableLocales[langOptions.lang] ? langOptions.lang : 'zh')
+            i18n.setLocale(availableLocales[langOptions.lang] ? langOptions.lang : 'en')
             return i18n.ngettext(...args)
         }
     },

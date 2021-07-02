@@ -1,11 +1,12 @@
 // @ts-ignore
-import { closest } from 'color-diff'
+import {closest} from 'color-diff'
+
 const color_palette = [
-    { R: 189, G: 105, B: 50 }, // 五星
-    { R: 162, G: 86, B: 225 }, // 四星
-    { R: 80, G: 128, B: 204 }, // 三星
-    { R: 41, G: 144, B: 114 }, // 两星
-    { R: 115, G: 118, B: 141 }, // 一星
+    {R: 189, G: 105, B: 50}, // Five stars
+    {R: 162, G: 86, B: 225}, // Four stars
+    {R: 80, G: 128, B: 204}, // Three Stars
+    {R: 41, G: 144, B: 114}, // Two stars
+    {R: 115, G: 118, B: 141}, // One Star
 ]
 const color_rmap = {
     189: 5,
@@ -14,6 +15,7 @@ const color_rmap = {
     41: 2,
     115: 1,
 }
+
 export function detectStars(colorCanvas: HTMLCanvasElement) {
     const ctx = colorCanvas.getContext('2d')
     if (!ctx) throw new Error('Canvas not supported!')
@@ -27,20 +29,28 @@ export function detectStars(colorCanvas: HTMLCanvasElement) {
     // @ts-ignore
     return color_rmap[closestColor.R] || 0
 }
+
 export function textBestmatch(text: string, list: string[]) {
-    if (list.includes(text)) return text
-    const matches = findBestMatch(text, list)
+    const listUpper = list.map(function (x) {
+        return x.toUpperCase()
+    })
+    const textUpper = text.toUpperCase()
+    if (listUpper.includes(textUpper)) return text
+    const matches = findBestMatch(textUpper, listUpper, list)
     if (matches.bestMatch.rating > 3) return ''
     return matches.bestMatch.target
 }
+
 export function textChinese(t: string) {
     const str = t.match(/[\u4e00-\u9fa5]/g)?.join('') || ''
     if (!str) throw new Error(`${t} doesn't contains chinese`)
     return str
 }
+
 export function textCNEN(t: string) {
-    return t.match(/[a-zA-Z\u4e00-\u9fa5]/g)?.join('') || ''
+    return t.match(/[a-zA-Z\'\u4e00-\u9fa5]/g)?.join('') || ''
 }
+
 export function textNumber(t: string) {
     const str = t.replace(/[^\d.]/g, '')
     if (!str) throw new Error(`${t} doesn't contains number`)
@@ -85,8 +95,8 @@ export function levenshteinEditDistance(value: string, other: string): number {
             cache[index] = result =
                 distance > result
                     ? distanceOther > result
-                        ? result + 1
-                        : distanceOther
+                    ? result + 1
+                    : distanceOther
                     : distanceOther > distance
                     ? distance + 1
                     : distanceOther
@@ -95,14 +105,16 @@ export function levenshteinEditDistance(value: string, other: string): number {
 
     return result || Infinity
 }
-export function findBestMatch(mainString: string, targetStrings: string[]) {
+
+export function findBestMatch(mainString: string, targetStringsUpper: string[], targetStrings: string[]) {
     const ratings = []
     let bestMatchIndex = 0
 
-    for (let i = 0; i < targetStrings.length; i++) {
+    for (let i = 0; i < targetStringsUpper.length; i++) {
+        const currentTargetStringUpper = targetStringsUpper[i]
         const currentTargetString = targetStrings[i]
-        const currentRating = levenshteinEditDistance(mainString, currentTargetString)
-        ratings.push({ target: currentTargetString, rating: currentRating })
+        const currentRating = levenshteinEditDistance(mainString, currentTargetStringUpper)
+        ratings.push({target: currentTargetString, rating: currentRating})
         if (currentRating < ratings[bestMatchIndex].rating) {
             bestMatchIndex = i
         }
@@ -110,21 +122,22 @@ export function findBestMatch(mainString: string, targetStrings: string[]) {
 
     const bestMatch = ratings[bestMatchIndex]
 
-    return { ratings: ratings, bestMatch: bestMatch, bestMatchIndex: bestMatchIndex }
+    return {ratings: ratings, bestMatch: bestMatch, bestMatchIndex: bestMatchIndex}
 }
+
 /**
- * OCR低置信度检测
- * @param page - OCR结果页
- * @param lowerThen - 最低置信度
- * @param numberOnly - 是否只对数字处理
- * @returns 所有可能错误的文本数组
+ * OCR low confidence detection
+ * @param page - OCR result page
+ * @param lowerThen - Lowest confidence
+ * @param numberOnly - Whether to deal with numbers only
+ * @returns An array of all possible errors
  */
 export function findLowConfidence(page: any, lowerThan: number, numberOnly = true) {
     const potentialErrors: string[] = []
     for (const i of page.words) {
         if (i.confidence > 0 && i.confidence < lowerThan / 100) {
-            // 置信度低于预期
-            // 如果只判断数字
+            // Confidence is lower than expected
+            // If you only judge the numbers
             if (numberOnly) {
                 try {
                     potentialErrors.push(`${textNumber(i.text)}${i.text.includes('%') ? '%' : ''}`)

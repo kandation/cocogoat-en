@@ -15,6 +15,6 @@ async function main() {
     })
     app.use(router).use(ElementPlus)
     app.mount('#app')
-    document.title = __('椰羊cocogoat')
+    document.title = __('LANG_APP_TITLE')
 }
 main()

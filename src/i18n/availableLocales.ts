@@ -12,6 +12,19 @@ export const availableLocales: Record<string, any> = {
         },
         ...require('./locales/en.json'),
     },
+    th: {
+        __name: 'Thai',
+        '': {
+            language: 'th',
+            plurals: {
+                text: 'nplurals = 1; plural = 0',
+                func() {
+                    return false
+                },
+            },
+        },
+        ...require('./locales/th.json'),
+    },
     jp: {
         __name: '日本語',
         '': {

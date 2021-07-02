@@ -115,7 +115,7 @@ export async function ocr(ret: SplitResults) {
     }
     return ocrres
 }
-/** 锐化/矩阵/卷积处理 */
+/** Sharpening/matrix/convolution processing */
 export function convolute(imageData: ImageData, weights: number[]) {
     const side = Math.round(Math.sqrt(weights.length))
     const halfSide = Math.floor(side / 2)
@@ -162,7 +162,7 @@ export function convolute(imageData: ImageData, weights: number[]) {
     return newImageData
 }
 /**
- *  色彩差值过滤器
+ *  Color difference filter
  */
 export function createColorFilter(r: number, g: number, b: number, diff = 40, invert = false) {
     return (ctx: CanvasRenderingContext2D, w: number, h: number) => {
@@ -187,7 +187,7 @@ export function createColorFilter(r: number, g: number, b: number, diff = 40, in
         ctx.putImageData(imageData, 0, 0)
     }
 }
-/* HSL亮度预处理 - 暂未使用 */
+/* HSL brightness preprocessing-not used yet */
 export function createBrightnessFilter(lmin: number, lmax: number, invert = false, threshold = 0) {
     return (ctx: CanvasRenderingContext2D, w: number, h: number) => {
         const imageData = ctx.getImageData(0, 0, w, h)
@@ -252,7 +252,7 @@ function rgbToHsl(rr: number, gg: number, bb: number) {
 
     return [h, s, l]
 }
-/* 滤波器预处理 - 暂未使用 */
+/* Filter preprocessing-not used yet */
 export function createBandpassFilter([r1, g1, b1]: number[], [r2, g2, b2]: number[], invert = false) {
     return (ctx: CanvasRenderingContext2D, w: number, h: number) => {
         const imageData = ctx.getImageData(0, 0, w, h)

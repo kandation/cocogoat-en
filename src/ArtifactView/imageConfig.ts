@@ -26,7 +26,7 @@ export default <
         oldHandler: (ctx: CanvasRenderingContext2D, w: number, h: number) => {
             createColorFilter(48, 56, 66, 50, true)(ctx, w, h)
             const imageData = ctx.getImageData(0, 0, w, h)
-            /* 搜索左上角 */
+            /* Search upper left corner */
             let l = 0
             let t = 0
             for (let i = 0; i < imageData.data.length; i += 4) {
@@ -36,7 +36,7 @@ export default <
                     break
                 }
             }
-            /* 搜索右下角 */
+            /* Search bottom right corner */
             let r = 0
             let b = 0
             for (let j = imageData.data.length - 1; j >= 0; j -= 4) {
@@ -49,10 +49,10 @@ export default <
 
             for (let i = 0; i < imageData.data.length; i += 4) {
                 if (
-                    (i / 4) % w < l || // 左上角左边
-                    i / 4 / w < t || // 左上角上面
-                    (i / 4) % w > r || // 右下角右边
-                    i / 4 / w > b // 右下角下面
+                    (i / 4) % w < l || // Left top left corner
+                    i / 4 / w < t || // Above the upper left corner
+                    (i / 4) % w > r || // Right bottom right corner
+                    i / 4 / w > b // Below the bottom right corner
                 ) {
                     imageData.data[i + 0] = 255
                     imageData.data[i + 1] = 255

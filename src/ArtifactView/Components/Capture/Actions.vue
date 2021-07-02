@@ -46,9 +46,9 @@ export default {
                 <i class="el-icon-error"></i> {{ __('识别失败') }}
             </div>
             <div class="actions-btn">
-                <el-button @click="$emit('delete')"> {{ __('删除') }} </el-button>
-                <el-button @click="$emit('reset')"> {{ __('重置') }} </el-button>
-                <el-button @click="$emit('modify')"> {{ __('保存') }} </el-button>
+                <el-button @click="$emit('delete')"> {{ __('LANG_DELETE') }} </el-button>
+                <el-button @click="$emit('reset')"> {{ __('LANG_RESET') }} </el-button>
+                <el-button @click="$emit('modify')"> {{ __('LANG_SAVE') }} </el-button>
             </div>
         </div>
     </section>

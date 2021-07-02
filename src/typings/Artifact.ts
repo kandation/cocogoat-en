@@ -1,17 +1,17 @@
 /**
- * 圣遗物数据结构。
- * 为了保证通用性，我们全部存储最原始的数据。
+ * Artifact data structure.
+ * In order to ensure versatility, we all store the most primitive data.
  */
 /**
- * 圣遗物词条
+ * Artifacts List
  */
 export interface ArtifactParam {
     /**
-     * 名称
+     * name
      */
     name: string
     /**
-     * 属性
+     * Attributes
      */
     value: string
 }

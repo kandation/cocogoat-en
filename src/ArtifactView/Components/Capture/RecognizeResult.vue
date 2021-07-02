@@ -51,7 +51,7 @@ export default {
                     size="small"
                     :min="0"
                     :max="levelMax[artifact.stars] || 20"
-                    label="等级"
+                    label="__('LANG_LEVEL')"
                 ></el-input-number>
             </div>
         </div>

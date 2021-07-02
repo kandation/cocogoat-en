@@ -61,7 +61,7 @@ module.exports = {
             },
             builderOptions: {
                 appId: 'work.cocogoat',
-                productName: '椰羊cocogoat',
+                productName: 'cocogoat',
                 copyright: '©2021 YuehaiTeam',
                 win: {
                     target: ['dir'],
@@ -82,7 +82,7 @@ module.exports = {
                 extraResources: ['./data/**'],
                 files: [
                     '**/*',
-                    '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}',
+                    '!**/node_modules/*/{CHANGELOG.md,README_cn.md,README,readme.md,readme}',
                     '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
                     '!**/node_modules/*.d.ts',
                     '!**/node_modules/.bin',

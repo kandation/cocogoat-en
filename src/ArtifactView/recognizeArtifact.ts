@@ -1,7 +1,7 @@
-import { ocr, SplitResults } from './imageProcess'
-import { Artifact, ArtifactParam } from '@/typings/Artifact'
-import { ArtifactNames, ArtifactParamTypes, ArtifactSubParamTypes } from '@/typings/ArtifactMap'
-import { detectStars, textCNEN, textNumber, textBestmatch, findLowConfidence } from './postRecognize'
+import {ocr, SplitResults} from './imageProcess'
+import {Artifact, ArtifactParam} from '@/typings/Artifact'
+import {ArtifactNames, ArtifactParamTypes, ArtifactSubParamTypes} from '@/typings/ArtifactMap'
+import {detectStars, textCNEN, textNumber, textBestmatch, findLowConfidence} from './postRecognize'
 
 const ocrCorrectionMap = [
     ['莉力', '攻击力'],
@@ -23,11 +23,12 @@ export async function recognizeArtifact(ret: SplitResults): Promise<[Artifact, s
     const potentialErrors: string[] = []
     /* OCR */
     const ocrres = await ocr(ret)
+    console.log(ocrres)
 
-    /* 星数 */
+    /* Number of stars */
     const stars = detectStars(ret.color.canvas)
 
-    /* 标题 */
+    /* Title */
     if (!ocrres.title || !ocrres.title.text) {
         throw new Error("Title cant't be empty")
     }
@@ -41,8 +42,9 @@ export async function recognizeArtifact(ret: SplitResults): Promise<[Artifact, s
         name = textBestmatch(name, ArtifactNames)
     }
 
-    /* 等级 */
+    /* Level */
     if (!ocrres.level || !ocrres.level.text) {
+        console.log(`Error Art Level [${ocrres.level.text}]`)
         throw new Error("Level cant't be empty")
     }
     let level = Number(
@@ -57,7 +59,7 @@ export async function recognizeArtifact(ret: SplitResults): Promise<[Artifact, s
     )
     level = level > 20 ? 20 : level
 
-    /* 主词条 */
+    /* Main */
     if (!ocrres.main || !ocrres.main.text) {
         throw new Error("Main cant't be empty")
     }
@@ -65,7 +67,7 @@ export async function recognizeArtifact(ret: SplitResults): Promise<[Artifact, s
     if (maybeError) {
         potentialErrors.push(maybeError)
     }
-    /* 副词条 */
+    /* Sub */
     if (!ocrres.sub || !ocrres.sub.text) {
         throw new Error("Sub cant't be empty")
     }
@@ -87,10 +89,10 @@ export async function recognizeArtifact(ret: SplitResults): Promise<[Artifact, s
         console.log(e)
     }
 
-    /* 副词条低置信度检查 */
+    /* Adverbs low confidence check */
     potentialErrors.push(...findLowConfidence(ocrres.sub, 80, true))
 
-    /* 主词条低置信度检查 */
+    /* Main title low confidence check */
     potentialErrors.push(...findLowConfidence(ocrres.main, 80, true))
 
     return [
@@ -107,10 +109,11 @@ export async function recognizeArtifact(ret: SplitResults): Promise<[Artifact, s
         ocrres,
     ]
 }
+
 /**
- * 对副词条数组可能出现加号丢失的情况进行预处理
- * 若本行有加号，则本行及之前所有行都合法
- * 若本行无加号，则暂不处理，等待后续判断
+ * Preprocessing the adverbs array where the plus sign may be missing
+ * If this line has a plus sign, this line and all previous lines are legal
+ * If the Bank does not have a plus sign, it will not be processed for the time being, waiting for subsequent judgment
  */
 function santizeParamsArray(input: string[]): string[] {
     const array = [...input] // clone it
@@ -125,6 +128,7 @@ function santizeParamsArray(input: string[]): string[] {
     }
     return [...result]
 }
+
 function recognizeParams(text: string, main = false): [ArtifactParam, string | null] {
     let newtext = text
     for (const i of ocrCorrectionMap) {
@@ -138,11 +142,12 @@ function recognizeParams(text: string, main = false): [ArtifactParam, string | n
     const name = textBestmatch(rawName, toCompare)
 
     /*
-     * PaddleOCR会将逗号(,)识别成点(.)
-     * 并且可能把百分号识别为数字
-     * 此处对点后3位及以上的把点去掉
-     * 两位的把最后一位去掉
-     */
+    * PaddleOCR will recognize the comma (,) as a dot (.)
+    * And may recognize the percent sign as a number
+    * Here are the points after the 3 digits and above, remove the points
+    * For two digits, remove the last digit
+    * */
+
     value = value.replace(/\.\./g, '.')
     const [, b] = value.split('.')
     if (b && b.length >= 3) {
@@ -153,21 +158,21 @@ function recognizeParams(text: string, main = false): [ArtifactParam, string | n
     }
 
     /*
-     * 词条属性的简单区间处理
-     *
-     * 百分比数字按分析通常不超过主70%副50%；且应该>1%
-     * 固定数字按分析通常不超过主6000副2000
-     * 数据来源：https://wiki.biligame.com/ys/圣遗物属性
-     *
-     * 若出现此类情形，一般直接认为是识别错误且是多识别一位数字
-     * 因此直接将第一位数字去除，并加入到疑似错误列表中
+      * Simple interval processing of entry attributes
+      *
+      * According to the analysis, the percentage figure usually does not exceed the main 70% and vice 50%; and should be >1%
+      * The fixed number usually does not exceed the main 6000 and 2000 according to the analysis.
+      * Data source: https://wiki.biligame.com/ys/圣遗物属性
+      *
+      * If such a situation occurs, it is generally considered to be an identification error and it is to identify one more digit
+      * So directly remove the first digit and add it to the list of suspected errors
      */
     if (value.includes('.')) {
         const uplimit = main ? 70 : 50
         const numval = Number(value)
         value += '%'
         if (numval > uplimit) {
-            console.log('检测到异常固定百分比', value, '已修改为', value.substr(1))
+            console.log('Fixed percentage of abnormalities detected', value, 'Has been modified to', value.substr(1))
             value = value.substr(1)
             maybeError = value
         } else if (numval < 1) {
@@ -176,7 +181,7 @@ function recognizeParams(text: string, main = false): [ArtifactParam, string | n
     } else {
         const uplimit = main ? 6000 : 2000
         if (Number(value) > uplimit) {
-            console.log('检测到异常固定数字', value, '已修改为', value.substr(1))
+            console.log('Abnormal fixed number detected', value, 'Has been modified to', value.substr(1))
             value = value.substr(1)
             maybeError = value
         }

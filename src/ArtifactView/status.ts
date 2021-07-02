@@ -47,29 +47,29 @@ export const status = reactive(<statusType>{
     artifactBackup: null,
     artifact: {
         id: 0,
-        name: '魔女的心之火',
+        name: 'Witch\'s Heart Flames',
         stars: 5,
         level: 20,
-        user: '诺艾尔',
+        user: 'Noelle',
         main: {
-            name: '防御力',
+            name: 'DEF',
             value: '20%',
         },
         sub: [
             {
-                name: '防御力',
+                name: 'DEF',
                 value: '666',
             },
             {
-                name: '生命值',
+                name: 'HP',
                 value: '1919',
             },
             {
-                name: '元素充能效率',
+                name: 'ENERGY RECHARGE',
                 value: '8.10%',
             },
             {
-                name: '防御力',
+                name: 'DEF',
                 value: '5.2%',
             },
         ],

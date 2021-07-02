@@ -199,7 +199,7 @@ export function convertAsMingyulab(artifacts: Artifact[]) {
                 slot: getStander.setName[artifacts[i].name][1],
                 mainStat:
                     artifacts[i].main.value.includes('%') ||
-                    (!artifacts[i].main.name.includes('生命值') &&
+                    (!artifacts[i].main.name.includes('__("HP")') &&
                         !artifacts[i].main.name.includes('防御力') &&
                         !artifacts[i].main.name.includes('攻击力'))
                         ? getStander.tag[artifacts[i].main.name]

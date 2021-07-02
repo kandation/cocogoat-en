@@ -193,7 +193,7 @@ export default {
     <div class="page-main">
         <article>
             <el-form label-position="right" label-width="auto" size="small">
-                <el-form-item :label="__(`语言(Language)`)">
+                <el-form-item :label="__(`LANG_LANGUAGE`)">
                     <el-select v-model="$lang.lang">
                         <el-option value="zh" label="简体中文"> 简体中文 </el-option>
                         <el-option v-for="(i, a) in $availableLocales" :key="a" :value="a" :label="i.__name">
